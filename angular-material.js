@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.10.1-master-5d03df8
+ * v0.10.2-rc1
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -14116,7 +14116,9 @@ function SidenavDirective($mdMedia, $mdUtil, $mdConstant, $mdTheming, $animate, 
     };
     var backdrop = $mdUtil.createBackdrop(scope, "md-sidenav-backdrop md-opaque ng-enter");
 
-    element.on('$destroy', sidenavCtrl.destroy);
+    element.on('$destroy', function() {
+      sidenavCtrl.destroy();
+    });
     $mdTheming.inherit(backdrop, element);
 
     scope.$watch(isLocked, updateIsLocked);
@@ -14257,7 +14259,7 @@ SidenavDirective.$inject = ["$mdMedia", "$mdUtil", "$mdConstant", "$mdTheming", 
  * @module material.components.sidenav
  *
  */
-function SidenavController($scope, $element, $attrs, $mdComponentRegistry, $q) {
+function SidenavController($scope, $element, $attrs, $mdComponentRegistry, $q, $timeout) {
 
   var self = this;
 
@@ -14273,9 +14275,11 @@ function SidenavController($scope, $element, $attrs, $mdComponentRegistry, $q) {
   self.toggle = function() { return self.$toggleOpen( !$scope.isOpen );  };
   self.$toggleOpen = function(value) { return $q.when($scope.isOpen = value); };
 
-  self.destroy = $mdComponentRegistry.register(self, $attrs.mdComponentId);
+  $timeout(function() {
+    self.destroy = $mdComponentRegistry.register(self, $attrs.mdComponentId);
+  });
 }
-SidenavController.$inject = ["$scope", "$element", "$attrs", "$mdComponentRegistry", "$q"];
+SidenavController.$inject = ["$scope", "$element", "$attrs", "$mdComponentRegistry", "$q", "$timeout"];
 
 })();
 (function(){
